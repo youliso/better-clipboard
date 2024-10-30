@@ -1,6 +1,6 @@
 {
-	"name": "better-clipboard",
-	"version": "1.0.0",
+	"name": "@youliso/better-clipboard",
+	"version": "1.0.2",
 	"description": "A better clipboard for Electron.",
 	"main": "./dist/index.js",
 	"homepage": "https://github.com/simo-an/better-clipboard",

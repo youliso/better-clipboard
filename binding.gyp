@@ -24,7 +24,7 @@
                     'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
                     'OTHER_CFLAGS': [
                         '-ObjC++',
-                        '-std=c++17'
+                        '-std=c++20'
                     ]
                 }
 			}
@@ -35,7 +35,7 @@
                         "src/clip_win.h",
                         "src/clip_win.cc"
                     ],
-                    'defines': [ '__WIN32__' ]
+                    'defines': [ '__WIN32__', 'NOMINMAX' ]
                 }
 			],
 			['OS=="linux"', {} ]
