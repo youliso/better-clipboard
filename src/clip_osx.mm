@@ -9,10 +9,13 @@ Local<Array> get_file_names(Isolate *isolate){
   int count = 0;
   for(NSPasteboardItem *tmpItem in tempArray){ 
     NSString *pathString = [tmpItem stringForType:@"public.file-url"];
-    const char* str = [pathString UTF8String];
-    if(str){
-      fileNames->Set(context, count, String::NewFromUtf8(isolate, str, NewStringType::kNormal).ToLocalChecked());
-      count++;
+    if (pathString && [pathString isKindOfClass:[NSString class]]) {
+        NSURL *url = [NSURL URLWithString:pathString];
+        NSString *realPathString = [url path];
+        if(str){
+          fileNames->Set(context, count, String::NewFromUtf8(isolate, realPathString, NewStringType::kNormal).ToLocalChecked());
+          count++;
+        }
     }
   }
   return fileNames;
