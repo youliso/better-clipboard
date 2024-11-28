@@ -1,29 +1,33 @@
 #include "clip_osx.h"
 
-Local<Array> get_file_names(Isolate *isolate){
+Local<Array> get_file_names(Isolate *isolate) {
   Local<Array> fileNames = Array::New(isolate);
   Local<Context> context = isolate->GetCurrentContext();
 
-  NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];  
-  NSArray* tempArray = [pasteboard pasteboardItems];
+  NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+  NSArray *tempArray = [pasteboard pasteboardItems];
   int count = 0;
-  for(NSPasteboardItem *tmpItem in tempArray){ 
+  for (NSPasteboardItem *tmpItem in tempArray) {
     NSString *pathString = [tmpItem stringForType:@"public.file-url"];
     if (pathString && [pathString isKindOfClass:[NSString class]]) {
-        NSURL *url = [NSURL URLWithString:pathString];
-        NSString *realPathString = [url path];
-        const char* str = [realPathString UTF8String];
-      if(str){
-          fileNames->Set(context, count, String::NewFromUtf8(isolate, str, NewStringType::kNormal).ToLocalChecked());
+      NSURL *url = [NSURL URLWithString:pathString];
+      NSString *realPathString = [url path];
+      const char *str = [realPathString UTF8String];
+      if (str) {
+        Local<String> fileName =
+            String::NewFromUtf8(isolate, str, NewStringType::kNormal)
+                .ToLocalChecked();
+        if (!fileName.IsEmpty()) {
+          (void)fileNames->Set(context, count, fileName);
           count++;
+        }
       }
     }
   }
   return fileNames;
 }
 
-void write_file_names(Isolate *isolate, Local<Array> fileNames)
-{
+void write_file_names(Isolate *isolate, Local<Array> fileNames) {
   Local<Context> context = isolate->GetCurrentContext();
 
   std::vector<string> files;
@@ -35,11 +39,12 @@ void write_file_names(Isolate *isolate, Local<Array> fileNames)
     files.push_back(pathStr);
   }
 
-  NSMutableArray* fileList = [NSMutableArray arrayWithCapacity:files.size()];
-  NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
-  for (unsigned int i = 0; i < files.size(); i++){
+  NSMutableArray *fileList = [NSMutableArray arrayWithCapacity:files.size()];
+  NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+  for (unsigned int i = 0; i < files.size(); i++) {
     [fileList addObject:[NSString stringWithUTF8String:files[i].c_str()]];
-    [pasteboard declareTypes:[NSArray arrayWithObject:NSPasteboardTypeFileURL] owner:nil];
+    [pasteboard declareTypes:[NSArray arrayWithObject:NSPasteboardTypeFileURL]
+                       owner:nil];
     [pasteboard setPropertyList:fileList forType:NSPasteboardTypeFileURL];
   }
 }
