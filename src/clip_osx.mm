@@ -41,10 +41,8 @@ void write_file_names(Isolate *isolate, Local<Array> fileNames) {
 
   NSMutableArray *fileList = [NSMutableArray arrayWithCapacity:files.size()];
   NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-  for (unsigned int i = 0; i < files.size(); i++) {
+  for (unsigned int i = 0; i < files.size(); i++)
     [fileList addObject:[NSString stringWithUTF8String:files[i].c_str()]];
-    [pasteboard declareTypes:[NSArray arrayWithObject:NSPasteboardTypeFileURL]
-                       owner:nil];
-    [pasteboard setPropertyList:fileList forType:NSPasteboardTypeFileURL];
-  }
+  [pasteboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+  [pasteboard setPropertyList:fileList forType:NSFilenamesPboardType];
 }
