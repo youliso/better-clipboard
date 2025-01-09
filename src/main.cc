@@ -5,6 +5,8 @@
 #include "clip_osx.h"
 #endif
 
+#ifndef __linux__
+
 namespace clipboard
 {
 	using v8::Context;
@@ -42,3 +44,5 @@ namespace clipboard
 
 	NODE_MODULE(NODE_GYP_MODULE_NAME, Init)
 }
+
+#endif
