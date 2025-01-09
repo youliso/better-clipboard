@@ -5,8 +5,6 @@
 #include "clip_osx.h"
 #endif
 
-#ifndef __linux__
-
 namespace clipboard
 {
 	using v8::Context;
@@ -22,18 +20,22 @@ namespace clipboard
 
 	void readFiles(const FunctionCallbackInfo<Value> &args)
 	{
+        #ifndef __linux__
 		Isolate *isolate = args.GetIsolate();
         Local<Array> fileNames = get_file_names(isolate);
         args.GetReturnValue().Set(fileNames);
+        #endif
 	}
 
     void writeFiles(const FunctionCallbackInfo<Value> &args)
 	{
+        #ifndef __linux__
 		if (args[0]->IsArray()) {
             Isolate *isolate = args.GetIsolate();
 			Local<Array> array = Local<Array>::Cast(args[0]);
 			write_file_names(isolate, array);
 		}
+        #endif
 	}
 
 	void Init(Local<Object> exports)
@@ -44,5 +46,3 @@ namespace clipboard
 
 	NODE_MODULE(NODE_GYP_MODULE_NAME, Init)
 }
-
-#endif
